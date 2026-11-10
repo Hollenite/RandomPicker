@@ -17,7 +17,9 @@ from telegram import split_message
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 SYSTEM_PROMPT = (
     "You are a patient tutor. Stay strictly within the requested stage. "
-    "Do not reveal later stages."
+    "Do not reveal later stages. "
+    "Format with simple Markdown only: **bold**, *italic*, `inline code`, "
+    "and fenced code blocks. No HTML, tables, images, or # headings."
 )
 EXPLAIN_MAX_TOKENS = 800
 HINT_MAX_TOKENS = 500

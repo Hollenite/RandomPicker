@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import html
 import json
 import os
+import re
 from typing import Any, Callable
 
 import requests
@@ -148,6 +150,59 @@ def split_message(text: str, limit: int = TELEGRAM_MAX_LEN) -> list[str]:
     return [chunk for chunk in chunks if chunk]
 
 
+_FENCE_RE = re.compile(r"```([a-zA-Z0-9_+-]*)\n?(.*?)```", re.DOTALL)
+_INLINE_CODE_RE = re.compile(r"`([^`\n]+)`")
+_LINK_RE = re.compile(r"\[([^\]]+)\]\((https?://[^)\s]+)\)")
+_HEADING_RE = re.compile(r"^(#{1,6})\s+(.+)$", re.MULTILINE)
+_BOLD_RE = re.compile(r"\*\*(.+?)\*\*")
+_ITALIC_RE = re.compile(r"(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)")
+_BULLET_RE = re.compile(r"^(\s*)[-*] +", re.MULTILINE)
+
+
+def format_telegram_html(text: str) -> str:
+    """Turn GitHub-style Markdown into Telegram HTML."""
+    fences: list[str] = []
+
+    def _keep_fence(match: re.Match[str]) -> str:
+        lang = (match.group(1) or "").strip()
+        body = html.escape(match.group(2).strip("\n"))
+        if lang:
+            lang_attr = html.escape(lang, quote=True)
+            rendered = f'<pre><code class="language-{lang_attr}">{body}</code></pre>'
+        else:
+            rendered = f"<pre>{body}</pre>"
+        fences.append(rendered)
+        return f"%%%FENCE{len(fences) - 1}%%%"
+
+    converted = _FENCE_RE.sub(_keep_fence, text)
+
+    codes: list[str] = []
+
+    def _keep_code(match: re.Match[str]) -> str:
+        codes.append(f"<code>{html.escape(match.group(1))}</code>")
+        return f"%%%CODE{len(codes) - 1}%%%"
+
+    converted = _INLINE_CODE_RE.sub(_keep_code, converted)
+    converted = html.escape(converted, quote=False)
+    converted = _HEADING_RE.sub(lambda m: f"<b>{m.group(2).strip()}</b>", converted)
+    converted = _BOLD_RE.sub(r"<b>\1</b>", converted)
+    converted = _ITALIC_RE.sub(r"<i>\1</i>", converted)
+
+    def _link(match: re.Match[str]) -> str:
+        label, url = match.group(1), match.group(2)
+        return f'<a href="{html.escape(url, quote=True)}">{label}</a>'
+
+    converted = _LINK_RE.sub(_link, converted)
+    converted = _BULLET_RE.sub(r"\1• ", converted)
+    converted = re.sub(r" +\n", "\n", converted)
+
+    for index, snippet in enumerate(codes):
+        converted = converted.replace(f"%%%CODE{index}%%%", snippet)
+    for index, snippet in enumerate(fences):
+        converted = converted.replace(f"%%%FENCE{index}%%%", snippet)
+    return converted
+
+
 def parse_command(text: str | None) -> tuple[str, list[str]] | None:
     if not text:
         return None
@@ -212,7 +267,7 @@ class TelegramClient:
     def send_message(
         self, text: str, reply_markup: dict[str, Any] | None = None
     ) -> int:
-        payload = {"chat_id": self.chat_id, "text": text}
+        payload = self._text_payload(text)
         if reply_markup is not None:
             payload["reply_markup"] = reply_markup
         if self.dry_run:
@@ -221,7 +276,7 @@ class TelegramClient:
             self._next_message_id += 1
             self.sent.append({"message_id": message_id, **payload})
             return message_id
-        result = self._api("sendMessage", payload)
+        result = self._api_text("sendMessage", payload, text)
         message_id = int(result["message_id"])
         self.sent.append({"message_id": message_id, **payload})
         return message_id
@@ -232,18 +287,31 @@ class TelegramClient:
         text: str,
         reply_markup: dict[str, Any] | None = None,
     ) -> None:
-        payload: dict[str, Any] = {
-            "chat_id": self.chat_id,
-            "message_id": message_id,
-            "text": text,
-        }
+        payload = self._text_payload(text)
+        payload["message_id"] = message_id
         payload["reply_markup"] = reply_markup if reply_markup is not None else EMPTY_KEYBOARD
         if self.dry_run:
             self._log("editMessageText", payload)
             self.edits.append(payload)
             return
-        self._api("editMessageText", payload)
+        self._api_text("editMessageText", payload, text)
         self.edits.append(payload)
+
+    def _text_payload(self, text: str) -> dict[str, Any]:
+        return {
+            "chat_id": self.chat_id,
+            "text": format_telegram_html(text),
+            "parse_mode": "HTML",
+            "disable_web_page_preview": True,
+        }
+
+    def _api_text(self, method: str, payload: dict[str, Any], original: str) -> Any:
+        try:
+            return self._api(method, payload)
+        except TelegramError:
+            payload["text"] = original
+            payload.pop("parse_mode", None)
+            return self._api(method, payload)
 
     def edit_reply_markup(self, message_id: int, reply_markup: dict[str, Any] | None) -> None:
         payload = {

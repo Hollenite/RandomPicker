@@ -62,7 +62,13 @@ from tutor import (
     save_cache,
     solution,
 )
-from watch_schedule import awake_text, load_windows, offline_text, watch_deadline
+from watch_schedule import (
+    awake_text,
+    current_window,
+    load_windows,
+    offline_text,
+    watch_deadline,
+)
 
 
 STATE_FILES = ("state.json", "green.json", "log.jsonl", "tutor_cache.json")
@@ -478,7 +484,7 @@ class App:
             return None
 
     def _send_question_reply(self, text: str, entry: dict[str, Any]) -> None:
-        chunks = split_message(text)
+        chunks = split_message(text, limit=3500)
         markup = question_keyboard(entry.get("status", "pending"))
         last = len(chunks) - 1
         for index, chunk in enumerate(chunks):
@@ -581,6 +587,11 @@ def run_watch(
 ) -> None:
     windows = load_windows()
     start = clock()
+    if duration is not None and current_window(start, windows) is None:
+        bot.send_message(offline_text(start, windows))
+        if commit:
+            commit()
+        return
     deadline = watch_deadline(start, duration, windows)
     bot.send_message(awake_text(deadline))
     if commit:

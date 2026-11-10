@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import json
 import random
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 from clock import IST
-from run_poll import App, reminder_due
+from run_poll import App, reminder_due, run_watch
 from run_prepare import main as prepare_main
 from run_prepare import run_prepare
 from run_poll import main as poll_main
@@ -433,6 +433,23 @@ def test_dry_run_prepare_and_poll_simulated_day(repo: Path, capsys, monkeypatch)
     assert load_state(repo)["today"]["reminders_sent"] == 2
 
 
+def test_watch_outside_window_does_not_stay_awake(repo: Path) -> None:
+    _prepare(repo)
+    bot = make_bot()
+    now = datetime(2026, 11, 9, 13, 0, tzinfo=IST)
+    run_watch(
+        repo,
+        bot,
+        random.Random(0),
+        clock=lambda: now,
+        duration=timedelta(hours=4),
+    )
+    texts = [m["text"] for m in bot.sent]
+    assert any("I'm going offline." in t for t in texts)
+    assert not any("I'm awake until" in t for t in texts)
+    assert any("14:00 IST" in t for t in texts)
+
+
 def test_watch_for_zero_sends_awake_and_offline(repo: Path, capsys, monkeypatch) -> None:
     monkeypatch.setenv("TELEGRAM_BOT_TOKEN", "fake")
     monkeypatch.setenv("TELEGRAM_CHAT_ID", str(CHAT_ID))
@@ -443,7 +460,7 @@ def test_watch_for_zero_sends_awake_and_offline(repo: Path, capsys, monkeypatch)
             "--root",
             str(repo),
             "--now",
-            "2026-11-09T12:00:00",
+            "2026-11-09T16:00:00",
             "--watch",
             "--watch-for",
             "0",
@@ -452,5 +469,4 @@ def test_watch_for_zero_sends_awake_and_offline(repo: Path, capsys, monkeypatch)
     out = capsys.readouterr().out
     assert "I'm awake until" in out
     assert "I'm going offline." in out
-    assert "2 hours" in out
-    assert "14:00 IST" in out
+    assert "tomorrow 08:00 IST" in out

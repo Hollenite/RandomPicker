@@ -47,6 +47,7 @@ def test_deadline_caps_to_window() -> None:
     assert watch_deadline(ist(8), timedelta(hours=4), WINDOWS) == ist(12)
     assert watch_deadline(ist(10), timedelta(hours=4), WINDOWS) == ist(12)
     assert watch_deadline(ist(14), timedelta(hours=4), WINDOWS) == ist(18)
+    assert watch_deadline(ist(16), timedelta(hours=4), WINDOWS) == ist(18)
 
 
 def test_awake_and_offline_copy() -> None:
