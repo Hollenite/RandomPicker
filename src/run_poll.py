@@ -43,6 +43,7 @@ from telegram import (
     TelegramClient,
     done_text,
     is_authorized,
+    parse_callback,
     parse_command,
     pending_keyboard,
     question_keyboard,
@@ -183,29 +184,45 @@ class App:
     def _handle_callback(self, callback: dict[str, Any]) -> Callable[[], None] | None:
         data = str(callback.get("data") or "")
         callback_id = str(callback.get("id") or "")
+        action, qid = parse_callback(data)
         entry = self._entry()
+        if not self._callback_targets_today(entry, qid, callback_id):
+            return None
         job: Callable[[], None] | None = None
 
-        if data == CALLBACK_DONE:
+        if action == CALLBACK_DONE:
             self._done(source="telegram_done")
             self.bot.answer_callback(callback_id)
-        elif data == CALLBACK_REROLL:
-            self._reroll()
-            self.bot.answer_callback(callback_id)
-        elif data == CALLBACK_EXPLAIN:
+        elif action == CALLBACK_REROLL:
+            self._reroll(callback_id)
+        elif action == CALLBACK_EXPLAIN:
             job = self._explain(entry, callback_id)
-        elif data == CALLBACK_HINT:
+        elif action == CALLBACK_HINT:
             job = self._hint(entry, callback_id)
-        elif data == CALLBACK_SOLUTION:
+        elif action == CALLBACK_SOLUTION:
             self._solution_ask(entry, callback_id)
-        elif data == CALLBACK_SOLUTION_CONFIRM:
+        elif action == CALLBACK_SOLUTION_CONFIRM:
             job = self._solution_confirm(entry, callback_id)
-        elif data == CALLBACK_SOLUTION_CANCEL:
+        elif action == CALLBACK_SOLUTION_CANCEL:
             self._solution_cancel(entry, callback_id)
         else:
             self.bot.answer_callback(callback_id)
         save_state(self.root, self.state)
         return job
+
+    def _callback_targets_today(
+        self,
+        entry: dict[str, Any] | None,
+        qid: int | None,
+        callback_id: str,
+    ) -> bool:
+        if qid is None:
+            return True
+        today_id = entry.get("id") if entry else None
+        if today_id is None or int(today_id) != qid:
+            self.bot.answer_callback(callback_id, "That's not today's question.")
+            return False
+        return True
 
     def _cmd_add(self, args: list[str]) -> None:
         if not args:
@@ -265,9 +282,7 @@ class App:
                 done_text(qid, question.title if question else None),
                 None,
             )
-        for mid in list(entry.get("button_message_ids") or []):
-            if mid != original:
-                self.bot.edit_reply_markup(int(mid), None)
+        self._clear_buttons(entry, keep=original)
         entry["button_message_ids"] = []
         append_log(
             self.root,
@@ -280,17 +295,17 @@ class App:
         )
         return True
 
-    def _reroll(self) -> None:
+    def _reroll(self, callback_id: str | None = None) -> None:
         entry = self._entry()
-        if not entry or entry.get("id") is None:
-            self.bot.send_message("No pending revisit today.")
+        if not entry or entry.get("id") is None or entry.get("status") != "pending":
+            text = "Already done today." if entry and entry.get("status") == "done" else "No pending revisit today."
+            if callback_id:
+                self.bot.answer_callback(callback_id, text)
+            self.bot.send_message(text)
             return
-        if entry.get("status") == "done":
-            self.bot.send_message("Already done today.")
-            return
-        if entry.get("status") != "pending":
-            self.bot.send_message("No pending revisit today.")
-            return
+
+        if callback_id:
+            self._heard_you(callback_id, "picking another question.")
 
         questions, _records, _catalog = load_questions(self.root)
         exclude = frozenset(int(i) for i in (entry.get("offered_ids") or []))
@@ -311,17 +326,21 @@ class App:
         entry["solution_confirm_pending"] = False
 
         original = entry.get("message_id")
+        self._clear_buttons(entry, keep=original)
+        body = reroll_text(
+            question.id,
+            question.difficulty,
+            question.title,
+            statement=question.statement,
+        )
+        keyboard = pending_keyboard(question.id)
         if original is not None:
-            self.bot.edit_message(
-                int(original),
-                reroll_text(
-                    question.id,
-                    question.difficulty,
-                    question.title,
-                    statement=question.statement,
-                ),
-                pending_keyboard(),
-            )
+            self.bot.edit_message(int(original), body, keyboard)
+            entry["button_message_ids"] = [int(original)]
+        else:
+            message_id = self.bot.send_message(body, keyboard)
+            entry["message_id"] = message_id
+            entry["button_message_ids"] = [message_id]
         append_log(
             self.root,
             "rerolled",
@@ -331,6 +350,13 @@ class App:
             bucket=bucket,
             source="telegram_reroll",
         )
+
+    def _clear_buttons(self, entry: dict[str, Any], keep: int | None = None) -> None:
+        keep_id = int(keep) if keep is not None else None
+        for mid in list(entry.get("button_message_ids") or []):
+            if keep_id is not None and int(mid) == keep_id:
+                continue
+            self.bot.edit_reply_markup(int(mid), None)
 
     def _require_pending(self, entry: dict[str, Any] | None, callback_id: str) -> dict[str, Any] | None:
         if not entry or entry.get("id") is None or entry.get("status") != "pending":
@@ -347,9 +373,12 @@ class App:
         entry = self._require_pending(entry, callback_id)
         if entry is None:
             return None
+        qid = int(entry["id"])
         self._heard_you(callback_id, "writing the explanation.")
 
         def finish() -> None:
+            if int(entry.get("id") or 0) != qid:
+                return
             question = self._today_question(entry)
             if question is None:
                 return
@@ -371,10 +400,13 @@ class App:
             self.bot.answer_callback(callback_id, "No more hints.")
             self._send_question_reply("No more hints.", entry)
             return None
+        qid = int(entry["id"])
         self._heard_you(callback_id, f"fetching hint {next_level}/3.")
         entry["hint_level"] = next_level
 
         def finish() -> None:
+            if int(entry.get("id") or 0) != qid:
+                return
             question = self._today_question(entry)
             if question is None:
                 return
@@ -411,7 +443,7 @@ class App:
         entry["solution_confirm_pending"] = True
         message_id = self.bot.send_message(
             "Sure? Try a hint first",
-            solution_confirm_keyboard(),
+            solution_confirm_keyboard(int(entry["id"])),
         )
         entry.setdefault("button_message_ids", []).append(message_id)
 
@@ -422,10 +454,13 @@ class App:
         if not entry.get("solution_confirm_pending"):
             self.bot.answer_callback(callback_id, "Tap Solution first.")
             return None
+        qid = int(entry["id"])
         self._heard_you(callback_id, "writing the solution.")
         entry["solution_confirm_pending"] = False
 
         def finish() -> None:
+            if int(entry.get("id") or 0) != qid:
+                return
             question = self._today_question(entry)
             if question is None:
                 return
@@ -485,7 +520,11 @@ class App:
 
     def _send_question_reply(self, text: str, entry: dict[str, Any]) -> None:
         chunks = split_message(text, limit=3500)
-        markup = question_keyboard(entry.get("status", "pending"))
+        qid = entry.get("id")
+        markup = question_keyboard(
+            entry.get("status", "pending"),
+            int(qid) if qid is not None else None,
+        )
         last = len(chunks) - 1
         for index, chunk in enumerate(chunks):
             keyboard = markup if index == last else None
@@ -520,7 +559,7 @@ class App:
         number = int(entry.get("reminders_sent") or 0) + 1
         message_id = self.bot.send_message(
             reminder_text(qid, number, entry.get("title")),
-            question_keyboard("pending"),
+            question_keyboard("pending", qid),
         )
         entry["reminders_sent"] = number
         entry["last_reminder_ts"] = self.now.isoformat()

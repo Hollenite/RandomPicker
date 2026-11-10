@@ -26,33 +26,54 @@ class TelegramError(RuntimeError):
     pass
 
 
-def pending_keyboard() -> dict[str, Any]:
+def callback_data(action: str, qid: int | None = None) -> str:
+    if qid is None:
+        return action
+    return f"{action}:{qid}"
+
+
+def parse_callback(data: str) -> tuple[str, int | None]:
+    action, sep, rest = data.partition(":")
+    if not sep:
+        return data, None
+    try:
+        return action, int(rest)
+    except ValueError:
+        return data, None
+
+
+def pending_keyboard(qid: int) -> dict[str, Any]:
     return {
         "inline_keyboard": [
-            [{"text": "Explain 🧠", "callback_data": CALLBACK_EXPLAIN}],
-            [{"text": "Hint 💡", "callback_data": CALLBACK_HINT}],
-            [{"text": "Solution 🔓", "callback_data": CALLBACK_SOLUTION}],
-            [{"text": "Done ✅", "callback_data": CALLBACK_DONE}],
-            [{"text": "Reroll 🎲", "callback_data": CALLBACK_REROLL}],
+            [{"text": "Explain 🧠", "callback_data": callback_data(CALLBACK_EXPLAIN, qid)}],
+            [{"text": "Hint 💡", "callback_data": callback_data(CALLBACK_HINT, qid)}],
+            [{"text": "Solution 🔓", "callback_data": callback_data(CALLBACK_SOLUTION, qid)}],
+            [{"text": "Done ✅", "callback_data": callback_data(CALLBACK_DONE, qid)}],
+            [{"text": "Reroll 🎲", "callback_data": callback_data(CALLBACK_REROLL, qid)}],
         ]
     }
 
 
-def solution_confirm_keyboard() -> dict[str, Any]:
+def solution_confirm_keyboard(qid: int) -> dict[str, Any]:
     return {
         "inline_keyboard": [
-            [{"text": "Show solution", "callback_data": CALLBACK_SOLUTION_CONFIRM}],
-            [{"text": "Cancel", "callback_data": CALLBACK_SOLUTION_CANCEL}],
+            [{"text": "Show solution", "callback_data": callback_data(CALLBACK_SOLUTION_CONFIRM, qid)}],
+            [{"text": "Cancel", "callback_data": callback_data(CALLBACK_SOLUTION_CANCEL, qid)}],
         ]
     }
 
 
-def question_keyboard(status: str, *, solution_confirm: bool = False) -> dict[str, Any] | None:
-    if status != "pending":
+def question_keyboard(
+    status: str,
+    qid: int | None = None,
+    *,
+    solution_confirm: bool = False,
+) -> dict[str, Any] | None:
+    if status != "pending" or qid is None:
         return None
     if solution_confirm:
-        return solution_confirm_keyboard()
-    return pending_keyboard()
+        return solution_confirm_keyboard(qid)
+    return pending_keyboard(qid)
 
 
 def keyboard_labels(markup: dict[str, Any] | None) -> list[str]:
@@ -87,7 +108,11 @@ def reroll_text(
     title: str | None = None,
     statement: str | None = None,
 ) -> str:
-    return _question_body(question_label(qid, difficulty, title), statement)
+    return _question_body(
+        question_label(qid, difficulty, title),
+        statement,
+        greeting="Rerolled.",
+    )
 
 
 def _question_body(label: str, statement: str | None, greeting: str | None = None) -> str:

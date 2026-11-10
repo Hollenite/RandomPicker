@@ -83,7 +83,7 @@ def run_prepare(
             statement=question.statement,
             greeting=fetch_greeting(),
         ),
-        question_keyboard("pending"),
+        question_keyboard("pending", question.id),
     )
     state["today"] = new_today_state(
         today=today,

@@ -20,6 +20,7 @@ from telegram import (
     CALLBACK_SOLUTION,
     CALLBACK_SOLUTION_CANCEL,
     CALLBACK_SOLUTION_CONFIRM,
+    callback_data,
     keyboard_labels,
     pending_keyboard,
     question_keyboard,
@@ -40,7 +41,13 @@ EVENING = datetime(2026, 11, 9, 21, 0, tzinfo=IST)
 
 
 def pending_labels() -> list[str]:
-    return keyboard_labels(pending_keyboard())
+    return keyboard_labels(pending_keyboard(1))
+
+
+def tap(repo: Path, update_id: int, action: str, qid: int | None = None, **kwargs) -> dict:
+    if qid is None:
+        qid = load_state(repo)["today"]["id"]
+    return callback_update(update_id, callback_data(action, qid), **kwargs)
 
 
 def test_pending_keyboard_has_tutor_done_and_reroll() -> None:
@@ -52,11 +59,13 @@ def test_pending_keyboard_has_tutor_done_and_reroll() -> None:
         "Done ✅",
         "Reroll 🎲",
     ]
-    rows = pending_keyboard()["inline_keyboard"]
+    rows = pending_keyboard(142)["inline_keyboard"]
     assert len(rows) == 5
     assert all(len(row) == 1 for row in rows)
+    assert rows[0][0]["callback_data"] == "explain:142"
     assert question_keyboard("done") is None
-    assert question_keyboard("pending") is not None
+    assert question_keyboard("pending") is None
+    assert question_keyboard("pending", 142) is not None
     text = morning_text(
         3684,
         "easy",
@@ -123,7 +132,7 @@ def test_empty_green_message(tmp_path: Path) -> None:
 def test_done_is_idempotent(repo: Path) -> None:
     _prepare(repo)
     qid = load_state(repo)["today"]["id"]
-    bot = make_bot([callback_update(1, CALLBACK_DONE), callback_update(2, CALLBACK_DONE)])
+    bot = make_bot([tap(repo, 1, CALLBACK_DONE), tap(repo, 2, CALLBACK_DONE)])
     App(repo, bot, HALF_EIGHT, random.Random(0)).run()
     records = load_green(repo)
     rec = next(r for r in records if int(r["id"]) == qid)
@@ -177,22 +186,24 @@ def test_done_command_without_args(repo: Path) -> None:
 def test_reroll_excludes_offered_and_keeps_buttons(repo: Path) -> None:
     _prepare(repo, seed=1)
     first = load_state(repo)["today"]["id"]
-    bot = make_bot([callback_update(1, CALLBACK_REROLL)])
+    bot = make_bot([tap(repo, 1, CALLBACK_REROLL)])
     App(repo, bot, HALF_EIGHT, random.Random(2)).run()
     state = load_state(repo)
     assert state["today"]["id"] != first
     assert first in state["today"]["offered_ids"]
     assert state["today"]["id"] in state["today"]["offered_ids"]
     assert any("Today's revisit" in e.get("text", "") for e in bot.edits)
+    assert any("Rerolled." in e.get("text", "") for e in bot.edits)
     assert any("Reroll 🎲" in keyboard_labels(e.get("reply_markup")) for e in bot.edits if e.get("reply_markup"))
+    assert any("picking another question" in m["text"] for m in bot.sent)
     assert any(row["event"] == "rerolled" for row in read_logs(repo))
 
 
 def test_reroll_after_done_is_noop(repo: Path) -> None:
     _prepare(repo)
-    App(repo, make_bot([callback_update(1, CALLBACK_DONE)]), HALF_EIGHT, random.Random(0)).run()
+    App(repo, make_bot([tap(repo, 1, CALLBACK_DONE)]), HALF_EIGHT, random.Random(0)).run()
     qid = load_state(repo)["today"]["id"]
-    bot = make_bot([callback_update(2, CALLBACK_REROLL)])
+    bot = make_bot([tap(repo, 2, CALLBACK_REROLL, qid)])
     App(repo, bot, HALF_EIGHT, random.Random(0)).run()
     assert load_state(repo)["today"]["id"] == qid
     assert any("Already done today." in m["text"] for m in bot.sent)
@@ -219,7 +230,7 @@ def test_add_range_command(repo: Path) -> None:
 
 def test_chat_id_filter_ignores_strangers(repo: Path) -> None:
     _prepare(repo)
-    bot = make_bot([callback_update(1, CALLBACK_DONE, user_id=999, chat_id=999)])
+    bot = make_bot([tap(repo, 1, CALLBACK_DONE, user_id=999, chat_id=999)])
     App(repo, bot, HALF_EIGHT, random.Random(0)).run()
     assert load_state(repo)["today"]["status"] == "pending"
     assert load_state(repo)["telegram_update_offset"] == 2
@@ -289,7 +300,7 @@ def test_reminders_copy_interval_and_buttons(repo: Path, monkeypatch) -> None:
 
 def test_no_reminders_once_done(repo: Path) -> None:
     _prepare(repo)
-    App(repo, make_bot([callback_update(1, CALLBACK_DONE)]), TEN, random.Random(0)).run()
+    App(repo, make_bot([tap(repo, 1, CALLBACK_DONE)]), TEN, random.Random(0)).run()
     bot = make_bot()
     App(repo, bot, NOON, random.Random(0)).run()
     assert bot.sent == []
@@ -304,13 +315,13 @@ def test_solution_confirm_gate(repo: Path) -> None:
         calls["n"] += 1
         return FakeResponse("full solution code")
 
-    bot = make_bot([callback_update(1, CALLBACK_SOLUTION)])
+    bot = make_bot([tap(repo, 1, CALLBACK_SOLUTION)])
     App(repo, bot, HALF_EIGHT, random.Random(0), http_post=post, sleep=lambda _d: None).run()
     assert calls["n"] == 0
     assert any("Sure? Try a hint first" in m["text"] for m in bot.sent)
     assert load_state(repo)["today"]["solution_confirm_pending"] is True
 
-    bot2 = make_bot([callback_update(2, CALLBACK_SOLUTION_CANCEL)])
+    bot2 = make_bot([tap(repo, 2, CALLBACK_SOLUTION_CANCEL)])
     App(repo, bot2, HALF_EIGHT, random.Random(0), http_post=post, sleep=lambda _d: None).run()
     assert calls["n"] == 0
     assert load_state(repo)["today"]["solution_confirm_pending"] is False
@@ -318,7 +329,7 @@ def test_solution_confirm_gate(repo: Path) -> None:
     assert "Done ✅" in keyboard_labels(bot2.sent[-1]["reply_markup"])
 
     bot3 = make_bot(
-        [callback_update(3, CALLBACK_SOLUTION), callback_update(4, CALLBACK_SOLUTION_CONFIRM)]
+        [tap(repo, 3, CALLBACK_SOLUTION), tap(repo, 4, CALLBACK_SOLUTION_CONFIRM)]
     )
     App(repo, bot3, HALF_EIGHT, random.Random(0), http_post=post, sleep=lambda _d: None).run()
     assert calls["n"] == 1
@@ -337,7 +348,7 @@ def test_explain_and_hint_keep_buttons(repo: Path) -> None:
             return FakeResponse(contents["hint"])
         return FakeResponse(contents["explain"])
 
-    bot = make_bot([callback_update(1, CALLBACK_EXPLAIN), callback_update(2, CALLBACK_HINT)])
+    bot = make_bot([tap(repo, 1, CALLBACK_EXPLAIN), tap(repo, 2, CALLBACK_HINT)])
     App(repo, bot, HALF_EIGHT, random.Random(0), http_post=post, sleep=lambda _d: None).run()
     texts = [m["text"] for m in bot.sent]
     assert any("writing the explanation" in t for t in texts)
@@ -358,7 +369,7 @@ def test_tutor_acks_before_groq(repo: Path) -> None:
         order.append("groq")
         return FakeResponse("body")
 
-    bot = make_bot([callback_update(1, CALLBACK_EXPLAIN), callback_update(2, CALLBACK_HINT)])
+    bot = make_bot([tap(repo, 1, CALLBACK_EXPLAIN), tap(repo, 2, CALLBACK_HINT)])
     original = bot.send_message
 
     def wrapped(text: str, reply_markup=None):
@@ -379,7 +390,7 @@ def test_missing_statement_keeps_done_working(repo: Path) -> None:
     (repo / "catalog.json").write_text(json.dumps(catalog, indent=2), encoding="utf-8")
     _prepare(repo)
     qid = load_state(repo)["today"]["id"]
-    bot = make_bot([callback_update(1, CALLBACK_EXPLAIN), callback_update(2, CALLBACK_DONE)])
+    bot = make_bot([tap(repo, 1, CALLBACK_EXPLAIN, qid), tap(repo, 2, CALLBACK_DONE, qid)])
     App(repo, bot, HALF_EIGHT, random.Random(0)).run()
     assert any(f"No statement in the catalog for #{qid}." in m["text"] for m in bot.sent)
     assert load_state(repo)["today"]["status"] == "done"
@@ -393,7 +404,7 @@ def test_tutor_failure_does_not_block_done(repo: Path) -> None:
     def post(*_a, **_k):
         raise requests.Timeout("down")
 
-    bot = make_bot([callback_update(1, CALLBACK_EXPLAIN), callback_update(2, CALLBACK_DONE)])
+    bot = make_bot([tap(repo, 1, CALLBACK_EXPLAIN), tap(repo, 2, CALLBACK_DONE)])
     App(repo, bot, HALF_EIGHT, random.Random(0), http_post=post, sleep=lambda _d: None).run()
     assert any("Tutor unavailable" in m["text"] for m in bot.sent)
     assert load_state(repo)["today"]["status"] == "done"
@@ -406,7 +417,7 @@ def test_no_more_hints_after_three(repo: Path) -> None:
     from store import save_state
 
     save_state(repo, state)
-    bot = make_bot([callback_update(1, CALLBACK_HINT)])
+    bot = make_bot([tap(repo, 1, CALLBACK_HINT)])
     App(repo, bot, HALF_EIGHT, random.Random(0)).run()
     assert any(m["text"] == "No more hints." for m in bot.sent)
     assert load_state(repo)["today"]["hint_level"] == 3
@@ -470,3 +481,117 @@ def test_watch_for_zero_sends_awake_and_offline(repo: Path, capsys, monkeypatch)
     assert "I'm awake until" in out
     assert "I'm going offline." in out
     assert "tomorrow 08:00 IST" in out
+
+
+def test_reroll_after_explain_strips_tutor_buttons(repo: Path) -> None:
+    _prepare(repo)
+    App(
+        repo,
+        make_bot([tap(repo, 1, CALLBACK_EXPLAIN)]),
+        HALF_EIGHT,
+        random.Random(0),
+        http_post=lambda *_a, **_k: FakeResponse("plain words"),
+        sleep=lambda _d: None,
+    ).run()
+    state = load_state(repo)
+    original = state["today"]["message_id"]
+    extras = [mid for mid in state["today"]["button_message_ids"] if mid != original]
+    assert extras
+    first = state["today"]["id"]
+    bot = make_bot([tap(repo, 2, CALLBACK_REROLL)])
+    App(repo, bot, HALF_EIGHT, random.Random(3)).run()
+    state = load_state(repo)
+    assert state["today"]["id"] != first
+    assert state["today"]["hint_level"] == 0
+    assert state["today"]["solution_confirm_pending"] is False
+    assert state["today"]["button_message_ids"] == [original]
+    stripped = [e for e in bot.edits if e.get("message_id") in extras]
+    assert stripped
+    assert stripped[0]["reply_markup"]["inline_keyboard"] == []
+    live = [e for e in bot.edits if e.get("message_id") == original and e.get("text")]
+    assert live
+    assert keyboard_labels(live[-1]["reply_markup"]) == pending_labels()
+
+
+def test_same_batch_explain_then_reroll_skips_tutor(repo: Path) -> None:
+    _prepare(repo, seed=1)
+    first = load_state(repo)["today"]["id"]
+    calls = {"n": 0}
+
+    def post(*_a, **_k):
+        calls["n"] += 1
+        return FakeResponse("plain words")
+
+    bot = make_bot([tap(repo, 1, CALLBACK_EXPLAIN), tap(repo, 2, CALLBACK_REROLL, first)])
+    App(repo, bot, HALF_EIGHT, random.Random(2), http_post=post, sleep=lambda _d: None).run()
+    state = load_state(repo)
+    assert state["today"]["id"] != first
+    assert calls["n"] == 0
+    assert not any("plain words" in m["text"] for m in bot.sent)
+    assert any("writing the explanation" in m["text"] for m in bot.sent)
+    assert any("picking another question" in m["text"] for m in bot.sent)
+
+
+def test_stale_done_after_reroll_is_ignored(repo: Path) -> None:
+    _prepare(repo, seed=1)
+    first = load_state(repo)["today"]["id"]
+    App(repo, make_bot([tap(repo, 1, CALLBACK_REROLL)]), HALF_EIGHT, random.Random(2)).run()
+    new_id = load_state(repo)["today"]["id"]
+    assert new_id != first
+    bot = make_bot([tap(repo, 2, CALLBACK_DONE, first)])
+    App(repo, bot, HALF_EIGHT, random.Random(0)).run()
+    state = load_state(repo)
+    assert state["today"]["status"] == "pending"
+    assert state["today"]["id"] == new_id
+    recs = {int(r["id"]): r for r in load_green(repo)}
+    assert recs[new_id]["times_revisited"] == 0
+    assert recs[first]["times_revisited"] == 0
+    assert any(a.get("text") == "That's not today's question." for a in bot.callback_answers)
+
+
+def test_reroll_clears_solution_confirm(repo: Path) -> None:
+    _prepare(repo, seed=1)
+    first = load_state(repo)["today"]["id"]
+    App(repo, make_bot([tap(repo, 1, CALLBACK_SOLUTION)]), HALF_EIGHT, random.Random(0)).run()
+    assert load_state(repo)["today"]["solution_confirm_pending"] is True
+    App(repo, make_bot([tap(repo, 2, CALLBACK_REROLL)]), HALF_EIGHT, random.Random(2)).run()
+    state = load_state(repo)
+    assert state["today"]["id"] != first
+    assert state["today"]["solution_confirm_pending"] is False
+    bot = make_bot([tap(repo, 3, CALLBACK_SOLUTION_CONFIRM, first)])
+    App(
+        repo,
+        bot,
+        HALF_EIGHT,
+        random.Random(0),
+        http_post=lambda *_a, **_k: FakeResponse("full solution code"),
+        sleep=lambda _d: None,
+    ).run()
+    assert not any("full solution code" in m["text"] for m in bot.sent)
+    assert load_state(repo)["today"]["status"] == "pending"
+
+
+def test_reroll_command_matches_button(repo: Path) -> None:
+    _prepare(repo, seed=1)
+    first = load_state(repo)["today"]["id"]
+    bot = make_bot([message_update(8, "/reroll")])
+    App(repo, bot, HALF_EIGHT, random.Random(2)).run()
+    state = load_state(repo)
+    assert state["today"]["id"] != first
+    assert first in state["today"]["offered_ids"]
+    assert any("Rerolled." in e.get("text", "") for e in bot.edits)
+    assert not any("Okay, I heard you" in m["text"] for m in bot.sent)
+
+
+def test_reroll_exhausted_pool_keeps_current(repo: Path) -> None:
+    _prepare(repo)
+    from store import save_state
+
+    state = load_state(repo)
+    current = state["today"]["id"]
+    state["today"]["offered_ids"] = [int(r["id"]) for r in load_green(repo)]
+    save_state(repo, state)
+    bot = make_bot([tap(repo, 1, CALLBACK_REROLL)])
+    App(repo, bot, HALF_EIGHT, random.Random(0)).run()
+    assert load_state(repo)["today"]["id"] == current
+    assert any("No other questions left to reroll today." in m["text"] for m in bot.sent)

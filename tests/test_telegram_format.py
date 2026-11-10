@@ -1,4 +1,11 @@
-from telegram import TelegramClient, format_telegram_html
+from telegram import TelegramClient, callback_data, format_telegram_html, parse_callback
+
+
+def test_parse_callback_binds_question_id() -> None:
+    assert callback_data("explain", 242) == "explain:242"
+    assert parse_callback("explain:242") == ("explain", 242)
+    assert parse_callback("done") == ("done", None)
+    assert parse_callback("solution_confirm:7") == ("solution_confirm", 7)
 
 
 def test_format_bold_italic_code_and_lists() -> None:
