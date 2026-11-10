@@ -3,3 +3,4 @@
 {"ts": "2026-11-09T17:22:52.263309+05:30", "event": "hint_1", "id": 242, "difficulty": "easy", "bucket": "easy", "source": "telegram_tutor"}
 {"ts": "2026-11-10T13:50:11.799542+05:30", "event": "missed", "id": 242, "difficulty": "easy", "bucket": "easy", "source": "poll"}
 {"ts": "2026-11-10T13:50:11.799542+05:30", "event": "picked", "id": 1, "difficulty": "easy", "bucket": "easy", "source": "poll"}
+{"ts": "2026-11-10T15:50:29.584329+05:30", "event": "reminder_sent", "id": 1, "difficulty": "easy", "bucket": "easy", "source": "poll", "reminder": 1}
