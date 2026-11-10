@@ -8,3 +8,4 @@
 {"ts": "2026-11-10T15:52:05.902621+05:30", "event": "hint_1", "id": 1, "difficulty": "easy", "bucket": "easy", "source": "telegram_tutor"}
 {"ts": "2026-11-10T15:56:49.053552+05:30", "event": "hint_2", "id": 1, "difficulty": "easy", "bucket": "easy", "source": "telegram_tutor"}
 {"ts": "2026-11-10T16:02:29.225389+05:30", "event": "hint_3", "id": 1, "difficulty": "easy", "bucket": "easy", "source": "telegram_tutor"}
+{"ts": "2026-11-10T16:02:44.657674+05:30", "event": "explain", "id": 1, "difficulty": "easy", "bucket": "easy", "source": "telegram_tutor"}
