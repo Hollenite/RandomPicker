@@ -1,0 +1,3 @@
+{"ts": "2026-11-09T17:11:02.787027+05:30", "event": "picked", "id": 242, "difficulty": "easy", "bucket": "easy", "source": "prepare"}
+{"ts": "2026-11-09T17:22:52.263309+05:30", "event": "explain", "id": 242, "difficulty": "easy", "bucket": "easy", "source": "telegram_tutor"}
+{"ts": "2026-11-09T17:22:52.263309+05:30", "event": "hint_1", "id": 242, "difficulty": "easy", "bucket": "easy", "source": "telegram_tutor"}

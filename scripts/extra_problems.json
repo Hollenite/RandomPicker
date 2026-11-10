@@ -1,0 +1,62 @@
+[
+  {
+    "id": 3684,
+    "difficulty": "easy",
+    "title": "Maximize Sum of At Most K Distinct Elements",
+    "statement": "You are given a positive integer array nums and an integer k.\n\nChoose at most k elements from nums so that their sum is maximized. However, the chosen numbers must be distinct.\n\nReturn an array containing the chosen numbers in strictly descending order."
+  },
+  {
+    "id": 3875,
+    "difficulty": "easy",
+    "title": "Construct Uniform Parity Array I",
+    "statement": "You are given an array nums1 of n distinct integers.\n\nYou want to construct another array nums2 of length n such that the elements in nums2 are either all odd or all even.\n\nFor each index i, you must choose exactly one of the following (in any order):\n- nums2[i] = nums1[i]\n- nums2[i] = nums1[i] - nums1[j], for an index j != i\n\nReturn true if it is possible to construct such an array, otherwise return false."
+  },
+  {
+    "id": 3718,
+    "difficulty": "easy",
+    "title": "Smallest Missing Multiple of K",
+    "statement": "Given an integer array nums and an integer k, return the smallest positive multiple of k that is missing from nums.\n\nA multiple of k is any positive integer divisible by k."
+  },
+  {
+    "id": 4015,
+    "difficulty": "medium",
+    "title": "Weighted Sum of a Tree",
+    "statement": "You are given an integer array parent of length n representing a rooted tree with nodes labeled from 0 to n - 1.\n\nThe tree is rooted at node 0, so parent[0] = -1. For each node i where 1 <= i <= n - 1, parent[i] denotes the parent of node i.\n\nYou are also given an integer array nums of length n, where nums[i] denotes the value of node i.\n\nThe weight of a node i at depth d is nums[i] * (h - d + 1), where h is the height of the tree.\n\nReturn the sum of the weights of all nodes in the tree.\n\nThe depth of a node is the number of nodes on the path from the root to that node, inclusive, with the root having depth 1.\n\nThe height of the tree is the maximum depth among all nodes."
+  },
+  {
+    "id": 4006,
+    "difficulty": "easy",
+    "title": "Count Valid Prefixes",
+    "statement": "You are given a binary string s.\n\nA prefix of s is considered valid if its characters can be rearranged to form an alternating string.\n\nReturn the number of valid prefixes of s.\n\nA string is considered alternating if no two adjacent characters are equal."
+  },
+  {
+    "id": 4014,
+    "difficulty": "medium",
+    "title": "Minimum Total Price After Applying Discounts",
+    "statement": "You are given two integer arrays prices and discounts.\n\nThe value prices[i] represents the price of the ith item, and discounts[j] represents a discount percentage.\n\nYou may apply discounts subject to the following rules:\n- Each discount can be applied to at most one item.\n- Each item can receive at most one discount.\n- An item may also receive no discount.\n\nIf a discount of d percent is applied to an item with price p, its final price becomes (p * (100 - d)) / 100. The final price is not rounded.\n\nReturn the minimum possible sum of final prices after assigning discounts optimally."
+  },
+  {
+    "id": 4001,
+    "difficulty": "medium",
+    "title": "Aggregate Two Time Series",
+    "statement": "You are given two 2D integer arrays series1 and series2.\n\nEach element in both series is of the form [timestamp, value]. Each array is sorted in strictly increasing order of timestamp.\n\nFor any timestamp not present in a series, its value is taken from the next available timestamp in the same series if one exists. Otherwise its value is 0.\n\nThe aggregated series is formed by summing the corresponding values from both series at every timestamp that appears in either series.\n\nReturn the aggregated series as a 2D integer array of [timestamp, summedValue] pairs, sorted by timestamp."
+  },
+  {
+    "id": 4000,
+    "difficulty": "easy",
+    "title": "Largest Integer With Given Digit Sum",
+    "statement": "You are given two non-negative integers n and s.\n\nReturn the largest integer that has at most n digits and whose sum of digits is s. If no such integer exists, return -1."
+  },
+  {
+    "id": 3701,
+    "difficulty": "easy",
+    "title": "Compute Alternating Sum",
+    "statement": "You are given an integer array nums.\n\nThe alternating sum of nums is the value obtained by adding elements at even indices and subtracting elements at odd indices. That is, nums[0] - nums[1] + nums[2] - nums[3]...\n\nReturn an integer denoting the alternating sum of nums."
+  },
+  {
+    "id": 3760,
+    "difficulty": "medium",
+    "title": "Maximum Substrings With Distinct Start",
+    "statement": "You are given a string s consisting of lowercase English letters.\n\nReturn an integer denoting the maximum number of substrings you can split s into such that each substring starts with a distinct character (no two substrings start with the same character)."
+  }
+]

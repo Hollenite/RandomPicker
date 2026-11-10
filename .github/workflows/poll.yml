@@ -1,0 +1,57 @@
+name: Watch Telegram
+
+on:
+  schedule:
+    # 08:00 IST and 14:00 IST. Each run long-polls until the window ends (~4 hours).
+    - cron: "30 2 * * *"
+    - cron: "30 8 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: revisit-picker
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 270
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Watch Telegram until the window ends
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GROQ_MODEL: ${{ secrets.GROQ_MODEL }}
+          PREFERRED_LANG: python
+          COMMIT_STATE: "1"
+          WATCH_WINDOWS: ${{ vars.WATCH_WINDOWS || '08:00-12:00,14:00-18:00' }}
+          REMINDER_START: ${{ vars.REMINDER_START || '09:00' }}
+          REMINDER_END: ${{ vars.REMINDER_END || '22:00' }}
+          REMINDER_INTERVAL_MIN: ${{ vars.REMINDER_INTERVAL_MIN || '120' }}
+          MAX_REMINDERS: ${{ vars.MAX_REMINDERS || '8' }}
+        run: python src/run_poll.py --watch --watch-for 14400
+
+      - name: Commit leftover state
+        if: always()
+        env:
+          COMMIT_STATE: "1"
+        run: python src/run_poll.py --commit-only
