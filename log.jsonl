@@ -11,3 +11,4 @@
 {"ts": "2026-11-10T16:02:44.657674+05:30", "event": "explain", "id": 1, "difficulty": "easy", "bucket": "easy", "source": "telegram_tutor"}
 {"ts": "2026-11-10T16:03:00.777723+05:30", "event": "rerolled", "id": 160, "difficulty": "easy", "bucket": "easy", "source": "telegram_reroll"}
 {"ts": "2026-11-10T16:03:21.443609+05:30", "event": "done", "id": 160, "difficulty": "easy", "bucket": "easy", "source": "telegram_done"}
+{"ts": "2026-11-11T08:02:41.611776+05:30", "event": "picked", "id": 1704, "difficulty": "easy", "bucket": "easy", "source": "poll"}
