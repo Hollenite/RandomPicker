@@ -1,21 +1,23 @@
 {
   "telegram_update_offset": 983481998,
   "today": {
-    "date": "2026-11-11",
-    "id": 1704,
-    "difficulty": "easy",
-    "title": "Determine if String Halves Are Alike",
-    "bucket": "easy",
+    "date": "2026-11-12",
+    "id": 24,
+    "difficulty": "medium",
+    "title": "Swap Nodes in Pairs",
+    "bucket": "medium",
     "offered_ids": [
-      1704
+      24
     ],
-    "message_id": 25,
-    "button_message_ids": [],
-    "status": "done",
-    "reminders_sent": 1,
-    "last_reminder_ts": "2026-11-11T10:02:44.525856+05:30",
+    "message_id": 31,
+    "button_message_ids": [
+      31
+    ],
+    "status": "pending",
+    "reminders_sent": 0,
+    "last_reminder_ts": null,
     "hint_level": 0,
     "solution_confirm_pending": false,
-    "prepared_ts": "2026-11-11T08:02:41.611776+05:30"
+    "prepared_ts": "2026-11-12T08:02:13.944037+05:30"
   }
 }
