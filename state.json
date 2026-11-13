@@ -1,21 +1,23 @@
 {
   "telegram_update_offset": 983481999,
   "today": {
-    "date": "2026-11-12",
-    "id": 24,
+    "date": "2026-11-13",
+    "id": 2104,
     "difficulty": "medium",
-    "title": "Swap Nodes in Pairs",
+    "title": "Sum of Subarray Ranges",
     "bucket": "medium",
     "offered_ids": [
-      24
+      2104
     ],
-    "message_id": 31,
-    "button_message_ids": [],
-    "status": "done",
-    "reminders_sent": 2,
-    "last_reminder_ts": "2026-11-12T14:04:02.237562+05:30",
+    "message_id": 38,
+    "button_message_ids": [
+      38
+    ],
+    "status": "pending",
+    "reminders_sent": 0,
+    "last_reminder_ts": null,
     "hint_level": 0,
     "solution_confirm_pending": false,
-    "prepared_ts": "2026-11-12T08:02:13.944037+05:30"
+    "prepared_ts": "2026-11-13T08:02:14.950967+05:30"
   }
 }
