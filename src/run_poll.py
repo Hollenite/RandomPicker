@@ -66,8 +66,10 @@ from tutor import (
 from watch_schedule import (
     awake_text,
     current_window,
+    done_sleep_grace,
     load_windows,
     offline_text,
+    packing_up_text,
     watch_deadline,
 )
 
@@ -615,6 +617,11 @@ def commit_state_files(root: Path) -> None:
         print(_redact(pushed.stderr or pushed.stdout), file=sys.stderr)
 
 
+def day_is_done(root: Path, now: datetime) -> bool:
+    entry = today_entry(load_state(root), today_ist(now))
+    return bool(entry and entry.get("status") == "done")
+
+
 def run_watch(
     root: Path,
     bot: TelegramClient,
@@ -631,12 +638,19 @@ def run_watch(
         if commit:
             commit()
         return
+    if duration is not None and day_is_done(root, start):
+        bot.send_message(offline_text(start, windows, until_tomorrow=True))
+        if commit:
+            commit()
+        return
     deadline = watch_deadline(start, duration, windows)
     bot.send_message(awake_text(deadline))
     if commit:
         commit()
 
     stop = {"flag": False}
+    packed_after_done = False
+    grace_until: datetime | None = None
 
     def _stop(_signum: int, _frame: object) -> None:
         stop["flag"] = True
@@ -652,15 +666,33 @@ def run_watch(
                 break
             remaining = (deadline - now).total_seconds()
             timeout = min(25, max(1, int(remaining)))
+            if grace_until is not None:
+                left = (grace_until - now).total_seconds()
+                if left <= 0:
+                    packed_after_done = True
+                    break
+                timeout = min(timeout, max(1, int(left)))
             App(root, bot, now, rng).run(poll_timeout=timeout)
             if commit:
                 commit()
             if duration == timedelta(0):
                 break
+            now = clock()
+            if day_is_done(root, now):
+                if grace_until is None:
+                    grace = done_sleep_grace()
+                    grace_until = now + grace
+                    if grace > timedelta(0):
+                        bot.send_message(packing_up_text(now, windows))
+                        if commit:
+                            commit()
+                if now >= grace_until:
+                    packed_after_done = True
+                    break
     finally:
         signal.signal(signal.SIGTERM, previous_term)
         signal.signal(signal.SIGINT, previous_int)
-        bot.send_message(offline_text(clock(), windows))
+        bot.send_message(offline_text(clock(), windows, until_tomorrow=packed_after_done))
         if commit:
             commit()
 

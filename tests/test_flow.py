@@ -483,6 +483,42 @@ def test_watch_for_zero_sends_awake_and_offline(repo: Path, capsys, monkeypatch)
     assert "tomorrow 08:00 IST" in out
 
 
+def test_watch_skips_session_when_already_done(repo: Path) -> None:
+    _prepare(repo)
+    App(repo, make_bot([tap(repo, 1, CALLBACK_DONE)]), TEN, random.Random(0)).run()
+    bot = make_bot()
+    run_watch(
+        repo,
+        bot,
+        random.Random(0),
+        clock=lambda: TEN,
+        duration=timedelta(hours=4),
+    )
+    texts = [m["text"] for m in bot.sent]
+    assert any("I'm going offline." in t for t in texts)
+    assert any("tomorrow 08:00 IST" in t for t in texts)
+    assert not any("I'm awake until" in t for t in texts)
+
+
+def test_watch_sleeps_after_done_grace(repo: Path, monkeypatch) -> None:
+    monkeypatch.setenv("DONE_SLEEP_GRACE_MIN", "0")
+    _prepare(repo)
+    bot = make_bot([tap(repo, 1, CALLBACK_DONE)])
+    run_watch(
+        repo,
+        bot,
+        random.Random(0),
+        clock=lambda: TEN,
+        duration=timedelta(hours=4),
+    )
+    texts = [m["text"] for m in bot.sent]
+    assert any("I'm awake until 12:00 IST" in t for t in texts)
+    assert any("I'm going offline." in t for t in texts)
+    assert any("tomorrow 08:00 IST" in t for t in texts)
+    assert load_state(repo)["today"]["status"] == "done"
+    assert not any("I'll go offline in" in t for t in texts)
+
+
 def test_reroll_after_explain_strips_tutor_buttons(repo: Path) -> None:
     _prepare(repo)
     App(

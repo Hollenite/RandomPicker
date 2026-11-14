@@ -7,6 +7,7 @@ from watch_schedule import (
     load_windows,
     next_wake,
     offline_text,
+    packing_up_text,
     watch_deadline,
 )
 
@@ -60,3 +61,13 @@ def test_awake_and_offline_copy() -> None:
     evening_off = offline_text(ist(18), WINDOWS)
     assert "14 hours" in evening_off
     assert "tomorrow 08:00 IST" in evening_off
+
+
+def test_next_wake_after_done_skips_rest_of_today() -> None:
+    assert next_wake(ist(10), WINDOWS, skip_remaining_today=True) == datetime(
+        2026, 11, 10, 8, 0, tzinfo=IST
+    )
+    assert "tomorrow 08:00 IST" in offline_text(ist(10), WINDOWS, until_tomorrow=True)
+    pack = packing_up_text(ist(10), WINDOWS)
+    assert "Today's revisit is done." in pack
+    assert "tomorrow 08:00 IST" in pack

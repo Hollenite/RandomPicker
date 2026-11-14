@@ -60,9 +60,25 @@ def session_end(now: datetime, windows: list[Window] | None = None) -> datetime 
     return _on_date(now_ist(now).date(), window.end)
 
 
-def next_wake(now: datetime, windows: list[Window] | None = None) -> datetime:
+def done_sleep_grace() -> timedelta:
+    raw = os.environ.get("DONE_SLEEP_GRACE_MIN", "5").strip()
+    try:
+        minutes = float(raw)
+    except ValueError:
+        minutes = 5
+    return timedelta(minutes=max(0.0, minutes))
+
+
+def next_wake(
+    now: datetime,
+    windows: list[Window] | None = None,
+    *,
+    skip_remaining_today: bool = False,
+) -> datetime:
     windows = windows if windows is not None else load_windows()
     local = now_ist(now)
+    if skip_remaining_today:
+        return _on_date(local.date() + timedelta(days=1), windows[0].start)
     for window in windows:
         start = _on_date(local.date(), window.start)
         if start > local:
@@ -111,10 +127,28 @@ def awake_text(until: datetime) -> str:
     )
 
 
-def offline_text(now: datetime, windows: list[Window] | None = None) -> str:
+def packing_up_text(now: datetime, windows: list[Window] | None = None) -> str:
     windows = windows if windows is not None else load_windows()
     local = now_ist(now)
-    wake = next_wake(local, windows)
+    wake = next_wake(local, windows, skip_remaining_today=True)
+    grace = done_sleep_grace()
+    wait = format_delay(grace) if grace > timedelta(0) else "a moment"
+    when = format_when(wake, local)
+    return (
+        f"Today's revisit is done. I'll go offline in {wait} "
+        f"and wake {when}."
+    )
+
+
+def offline_text(
+    now: datetime,
+    windows: list[Window] | None = None,
+    *,
+    until_tomorrow: bool = False,
+) -> str:
+    windows = windows if windows is not None else load_windows()
+    local = now_ist(now)
+    wake = next_wake(local, windows, skip_remaining_today=until_tomorrow)
     delay = format_delay(wake - local)
     when = format_when(wake, local)
     return f"I'm going offline. I'll be awake after {delay} ({when})."
