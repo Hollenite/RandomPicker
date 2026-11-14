@@ -25,3 +25,4 @@
 {"ts": "2026-11-14T08:02:13.488924+05:30", "event": "missed", "id": 2104, "difficulty": "medium", "bucket": "medium", "source": "poll"}
 {"ts": "2026-11-14T08:02:13.488924+05:30", "event": "picked", "id": 104, "difficulty": "easy", "bucket": "easy", "source": "poll"}
 {"ts": "2026-11-14T10:02:21.969817+05:30", "event": "reminder_sent", "id": 104, "difficulty": "easy", "bucket": "easy", "source": "poll", "reminder": 1}
+{"ts": "2026-11-14T11:29:50.936334+05:30", "event": "done", "id": 104, "difficulty": "easy", "bucket": "easy", "source": "telegram_done"}
