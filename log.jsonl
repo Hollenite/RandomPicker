@@ -24,3 +24,4 @@
 {"ts": "2026-11-13T16:04:09.388839+05:30", "event": "reminder_sent", "id": 2104, "difficulty": "medium", "bucket": "medium", "source": "poll", "reminder": 3}
 {"ts": "2026-11-14T08:02:13.488924+05:30", "event": "missed", "id": 2104, "difficulty": "medium", "bucket": "medium", "source": "poll"}
 {"ts": "2026-11-14T08:02:13.488924+05:30", "event": "picked", "id": 104, "difficulty": "easy", "bucket": "easy", "source": "poll"}
+{"ts": "2026-11-14T10:02:21.969817+05:30", "event": "reminder_sent", "id": 104, "difficulty": "easy", "bucket": "easy", "source": "poll", "reminder": 1}
