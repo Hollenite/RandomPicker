@@ -1,26 +1,23 @@
 {
   "telegram_update_offset": 983481999,
   "today": {
-    "date": "2026-11-13",
-    "id": 2104,
-    "difficulty": "medium",
-    "title": "Sum of Subarray Ranges",
-    "bucket": "medium",
+    "date": "2026-11-14",
+    "id": 104,
+    "difficulty": "easy",
+    "title": "Maximum Depth of Binary Tree",
+    "bucket": "easy",
     "offered_ids": [
-      2104
+      104
     ],
-    "message_id": 38,
+    "message_id": 46,
     "button_message_ids": [
-      38,
-      39,
-      42,
-      43
+      46
     ],
     "status": "pending",
-    "reminders_sent": 3,
-    "last_reminder_ts": "2026-11-13T16:04:09.388839+05:30",
+    "reminders_sent": 0,
+    "last_reminder_ts": null,
     "hint_level": 0,
     "solution_confirm_pending": false,
-    "prepared_ts": "2026-11-13T08:02:14.950967+05:30"
+    "prepared_ts": "2026-11-14T08:02:13.488924+05:30"
   }
 }
