@@ -1,21 +1,23 @@
 {
   "telegram_update_offset": 983482001,
   "today": {
-    "date": "2026-11-14",
-    "id": 104,
-    "difficulty": "easy",
-    "title": "Maximum Depth of Binary Tree",
-    "bucket": "easy",
+    "date": "2026-11-15",
+    "id": 49,
+    "difficulty": "medium",
+    "title": "Group Anagrams",
+    "bucket": "medium",
     "offered_ids": [
-      104
+      49
     ],
-    "message_id": 46,
-    "button_message_ids": [],
-    "status": "done",
-    "reminders_sent": 1,
-    "last_reminder_ts": "2026-11-14T10:02:21.969817+05:30",
+    "message_id": 52,
+    "button_message_ids": [
+      52
+    ],
+    "status": "pending",
+    "reminders_sent": 0,
+    "last_reminder_ts": null,
     "hint_level": 0,
     "solution_confirm_pending": false,
-    "prepared_ts": "2026-11-14T08:02:13.488924+05:30"
+    "prepared_ts": "2026-11-15T08:02:02.616131+05:30"
   }
 }
