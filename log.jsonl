@@ -30,3 +30,4 @@
 {"ts": "2026-11-15T10:02:27.433323+05:30", "event": "reminder_sent", "id": 49, "difficulty": "medium", "bucket": "medium", "source": "poll", "reminder": 1}
 {"ts": "2026-11-15T14:03:41.589788+05:30", "event": "reminder_sent", "id": 49, "difficulty": "medium", "bucket": "medium", "source": "poll", "reminder": 2}
 {"ts": "2026-11-15T15:48:39.955022+05:30", "event": "done", "id": 49, "difficulty": "medium", "bucket": "medium", "source": "telegram_done"}
+{"ts": "2026-11-16T08:03:18.153216+05:30", "event": "picked", "id": 200, "difficulty": "medium", "bucket": "medium", "source": "poll"}

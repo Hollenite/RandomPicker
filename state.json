@@ -1,21 +1,23 @@
 {
   "telegram_update_offset": 983482004,
   "today": {
-    "date": "2026-11-15",
-    "id": 49,
+    "date": "2026-11-16",
+    "id": 200,
     "difficulty": "medium",
-    "title": "Group Anagrams",
+    "title": "Number of Islands",
     "bucket": "medium",
     "offered_ids": [
-      49
+      200
     ],
-    "message_id": 52,
-    "button_message_ids": [],
-    "status": "done",
-    "reminders_sent": 2,
-    "last_reminder_ts": "2026-11-15T14:03:41.589788+05:30",
+    "message_id": 61,
+    "button_message_ids": [
+      61
+    ],
+    "status": "pending",
+    "reminders_sent": 0,
+    "last_reminder_ts": null,
     "hint_level": 0,
     "solution_confirm_pending": false,
-    "prepared_ts": "2026-11-15T08:02:02.616131+05:30"
+    "prepared_ts": "2026-11-16T08:03:18.153216+05:30"
   }
 }
