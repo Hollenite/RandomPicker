@@ -1,21 +1,23 @@
 {
   "telegram_update_offset": 983482005,
   "today": {
-    "date": "2026-11-16",
-    "id": 200,
+    "date": "2026-11-17",
+    "id": 53,
     "difficulty": "medium",
-    "title": "Number of Islands",
+    "title": "Maximum Subarray",
     "bucket": "medium",
     "offered_ids": [
-      200
+      53
     ],
-    "message_id": 61,
-    "button_message_ids": [],
-    "status": "done",
-    "reminders_sent": 1,
-    "last_reminder_ts": "2026-11-16T10:03:38.426196+05:30",
+    "message_id": 67,
+    "button_message_ids": [
+      67
+    ],
+    "status": "pending",
+    "reminders_sent": 0,
+    "last_reminder_ts": null,
     "hint_level": 0,
     "solution_confirm_pending": false,
-    "prepared_ts": "2026-11-16T08:03:18.153216+05:30"
+    "prepared_ts": "2026-11-17T08:02:05.706697+05:30"
   }
 }
