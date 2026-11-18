@@ -1,21 +1,23 @@
 {
   "telegram_update_offset": 983482006,
   "today": {
-    "date": "2026-11-17",
-    "id": 53,
-    "difficulty": "medium",
-    "title": "Maximum Subarray",
-    "bucket": "medium",
+    "date": "2026-11-18",
+    "id": 58,
+    "difficulty": "easy",
+    "title": "Length of Last Word",
+    "bucket": "easy",
     "offered_ids": [
-      53
+      58
     ],
-    "message_id": 67,
-    "button_message_ids": [],
-    "status": "done",
-    "reminders_sent": 2,
-    "last_reminder_ts": "2026-11-17T14:03:56.210746+05:30",
+    "message_id": 75,
+    "button_message_ids": [
+      75
+    ],
+    "status": "pending",
+    "reminders_sent": 0,
+    "last_reminder_ts": null,
     "hint_level": 0,
     "solution_confirm_pending": false,
-    "prepared_ts": "2026-11-17T08:02:05.706697+05:30"
+    "prepared_ts": "2026-11-18T08:02:21.559479+05:30"
   }
 }
