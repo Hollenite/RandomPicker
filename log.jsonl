@@ -45,3 +45,4 @@
 {"ts": "2026-11-19T10:02:38.574544+05:30", "event": "reminder_sent", "id": 319, "difficulty": "medium", "bucket": "medium", "source": "poll", "reminder": 1}
 {"ts": "2026-11-19T14:04:42.316383+05:30", "event": "reminder_sent", "id": 319, "difficulty": "medium", "bucket": "medium", "source": "poll", "reminder": 2}
 {"ts": "2026-11-19T16:04:51.314334+05:30", "event": "reminder_sent", "id": 319, "difficulty": "medium", "bucket": "medium", "source": "poll", "reminder": 3}
+{"ts": "2026-11-19T16:21:12.915925+05:30", "event": "done", "id": 319, "difficulty": "medium", "bucket": "medium", "source": "telegram_done"}
