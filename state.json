@@ -1,21 +1,23 @@
 {
   "telegram_update_offset": 983482008,
   "today": {
-    "date": "2026-11-18",
-    "id": 58,
-    "difficulty": "easy",
-    "title": "Length of Last Word",
-    "bucket": "easy",
+    "date": "2026-11-19",
+    "id": 319,
+    "difficulty": "medium",
+    "title": "Bulb Switcher",
+    "bucket": "medium",
     "offered_ids": [
-      58
+      319
     ],
-    "message_id": 75,
-    "button_message_ids": [],
-    "status": "done",
-    "reminders_sent": 2,
-    "last_reminder_ts": "2026-11-18T14:04:22.048139+05:30",
+    "message_id": 83,
+    "button_message_ids": [
+      83
+    ],
+    "status": "pending",
+    "reminders_sent": 0,
+    "last_reminder_ts": null,
     "hint_level": 0,
     "solution_confirm_pending": false,
-    "prepared_ts": "2026-11-18T08:02:21.559479+05:30"
+    "prepared_ts": "2026-11-19T08:02:23.603444+05:30"
   }
 }
