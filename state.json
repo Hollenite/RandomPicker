@@ -1,21 +1,23 @@
 {
   "telegram_update_offset": 983482009,
   "today": {
-    "date": "2026-11-19",
-    "id": 319,
-    "difficulty": "medium",
-    "title": "Bulb Switcher",
-    "bucket": "medium",
+    "date": "2026-11-20",
+    "id": 2880,
+    "difficulty": "easy",
+    "title": "Select Data",
+    "bucket": "easy",
     "offered_ids": [
-      319
+      2880
     ],
-    "message_id": 83,
-    "button_message_ids": [],
-    "status": "done",
-    "reminders_sent": 3,
-    "last_reminder_ts": "2026-11-19T16:04:51.314334+05:30",
+    "message_id": 92,
+    "button_message_ids": [
+      92
+    ],
+    "status": "pending",
+    "reminders_sent": 0,
+    "last_reminder_ts": null,
     "hint_level": 0,
     "solution_confirm_pending": false,
-    "prepared_ts": "2026-11-19T08:02:23.603444+05:30"
+    "prepared_ts": "2026-11-20T08:02:15.205563+05:30"
   }
 }
