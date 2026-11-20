@@ -12,11 +12,12 @@
     "message_id": 92,
     "button_message_ids": [
       92,
-      93
+      93,
+      96
     ],
     "status": "pending",
-    "reminders_sent": 1,
-    "last_reminder_ts": "2026-11-20T10:02:27.756526+05:30",
+    "reminders_sent": 2,
+    "last_reminder_ts": "2026-11-20T14:04:04.854633+05:30",
     "hint_level": 0,
     "solution_confirm_pending": false,
     "prepared_ts": "2026-11-20T08:02:15.205563+05:30"
