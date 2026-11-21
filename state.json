@@ -1,26 +1,23 @@
 {
   "telegram_update_offset": 983482009,
   "today": {
-    "date": "2026-11-20",
-    "id": 2880,
+    "date": "2026-11-21",
+    "id": 100,
     "difficulty": "easy",
-    "title": "Select Data",
+    "title": "Same Tree",
     "bucket": "easy",
     "offered_ids": [
-      2880
+      100
     ],
-    "message_id": 92,
+    "message_id": 100,
     "button_message_ids": [
-      92,
-      93,
-      96,
-      97
+      100
     ],
     "status": "pending",
-    "reminders_sent": 3,
-    "last_reminder_ts": "2026-11-20T16:04:14.412102+05:30",
+    "reminders_sent": 0,
+    "last_reminder_ts": null,
     "hint_level": 0,
     "solution_confirm_pending": false,
-    "prepared_ts": "2026-11-20T08:02:15.205563+05:30"
+    "prepared_ts": "2026-11-21T08:01:55.530840+05:30"
   }
 }
