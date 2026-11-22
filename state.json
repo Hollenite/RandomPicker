@@ -1,21 +1,23 @@
 {
   "telegram_update_offset": 983482012,
   "today": {
-    "date": "2026-11-21",
-    "id": 100,
+    "date": "2026-11-22",
+    "id": 2022,
     "difficulty": "easy",
-    "title": "Same Tree",
+    "title": "Convert 1D Array Into 2D Array",
     "bucket": "easy",
     "offered_ids": [
-      100
+      2022
     ],
-    "message_id": 100,
-    "button_message_ids": [],
-    "status": "done",
-    "reminders_sent": 1,
-    "last_reminder_ts": "2026-11-21T10:02:09.699639+05:30",
+    "message_id": 106,
+    "button_message_ids": [
+      106
+    ],
+    "status": "pending",
+    "reminders_sent": 0,
+    "last_reminder_ts": null,
     "hint_level": 0,
     "solution_confirm_pending": false,
-    "prepared_ts": "2026-11-21T08:01:55.530840+05:30"
+    "prepared_ts": "2026-11-22T08:02:14.890512+05:30"
   }
 }
