@@ -1,21 +1,23 @@
 {
   "telegram_update_offset": 983482013,
   "today": {
-    "date": "2026-11-22",
-    "id": 2022,
+    "date": "2026-11-23",
+    "id": 645,
     "difficulty": "easy",
-    "title": "Convert 1D Array Into 2D Array",
+    "title": "Set Mismatch",
     "bucket": "easy",
     "offered_ids": [
-      2022
+      645
     ],
-    "message_id": 106,
-    "button_message_ids": [],
-    "status": "done",
-    "reminders_sent": 1,
-    "last_reminder_ts": "2026-11-22T10:02:37.162591+05:30",
+    "message_id": 112,
+    "button_message_ids": [
+      112
+    ],
+    "status": "pending",
+    "reminders_sent": 0,
+    "last_reminder_ts": null,
     "hint_level": 0,
     "solution_confirm_pending": false,
-    "prepared_ts": "2026-11-22T08:02:14.890512+05:30"
+    "prepared_ts": "2026-11-23T08:04:11.083452+05:30"
   }
 }
