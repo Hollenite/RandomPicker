@@ -1,21 +1,23 @@
 {
   "telegram_update_offset": 983482016,
   "today": {
-    "date": "2026-11-23",
-    "id": 645,
-    "difficulty": "easy",
-    "title": "Set Mismatch",
-    "bucket": "easy",
+    "date": "2026-11-24",
+    "id": 189,
+    "difficulty": "medium",
+    "title": "Rotate Array",
+    "bucket": "medium",
     "offered_ids": [
-      645
+      189
     ],
-    "message_id": 112,
-    "button_message_ids": [],
-    "status": "done",
-    "reminders_sent": 2,
-    "last_reminder_ts": "2026-11-23T14:06:57.008996+05:30",
+    "message_id": 121,
+    "button_message_ids": [
+      121
+    ],
+    "status": "pending",
+    "reminders_sent": 0,
+    "last_reminder_ts": null,
     "hint_level": 0,
     "solution_confirm_pending": false,
-    "prepared_ts": "2026-11-23T08:04:11.083452+05:30"
+    "prepared_ts": "2026-11-24T08:03:08.575882+05:30"
   }
 }
