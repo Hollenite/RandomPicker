@@ -10,5 +10,9 @@
     "hint_1": "**Hint (Level 1):**  \nThink about a data structure that lets you quickly check whether you have already seen a number that would pair with the current element to reach the target. This structure should support fast (≈ O(1)) look‑ups.",
     "hint_2": "**Hint (Level 2):**  \nAs you scan the array, keep track of the numbers you’ve already visited. For each new element `x`, the value you need to complete the pair is `target – x`. The crucial observation is that if that needed value has been seen earlier, you’ve already stored its index and can immediately return the two indices. The invariant you maintain is: *the map always contains every number from the portion of the array processed so far, keyed by its index*. This lets you find the matching partner in constant time for each element.",
     "hint_3": "**Hint (Level 3):**  \nIterate through the array once, maintaining a lookup that maps each number you have passed to its index. For the current element, compute the value that would reach the target when added to it. Check the lookup: if that needed value is already present, you have both indices and can stop; otherwise, add the current number and its index to the lookup and continue."
+  },
+  "402": {
+    "statement_hash": "ac4566d6e8f6e445298aa21bccd2d7adc480099579fd26fc08ab36f58d3905fd",
+    "hint_1": "**Hint:**  \nConsider using a *stack* (or a similar “last‑in‑first‑out” structure) to process the digits from left to right, maintaining a monotonic property that helps decide which digits to discard."
   }
 }

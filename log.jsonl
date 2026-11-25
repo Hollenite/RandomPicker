@@ -68,3 +68,4 @@
 {"ts": "2026-11-25T10:03:45.628934+05:30", "event": "reminder_sent", "id": 402, "difficulty": "medium", "bucket": "medium", "source": "poll", "reminder": 1}
 {"ts": "2026-11-25T14:05:19.895059+05:30", "event": "reminder_sent", "id": 402, "difficulty": "medium", "bucket": "medium", "source": "poll", "reminder": 2}
 {"ts": "2026-11-25T16:05:22.573670+05:30", "event": "reminder_sent", "id": 402, "difficulty": "medium", "bucket": "medium", "source": "poll", "reminder": 3}
+{"ts": "2026-11-25T16:50:18.103782+05:30", "event": "hint_1", "id": 402, "difficulty": "medium", "bucket": "medium", "source": "telegram_tutor"}

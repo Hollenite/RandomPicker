@@ -1,5 +1,5 @@
 {
-  "telegram_update_offset": 983482017,
+  "telegram_update_offset": 983482018,
   "today": {
     "date": "2026-11-25",
     "id": 402,
@@ -14,12 +14,13 @@
       127,
       128,
       131,
-      132
+      132,
+      134
     ],
     "status": "pending",
     "reminders_sent": 3,
     "last_reminder_ts": "2026-11-25T16:05:22.573670+05:30",
-    "hint_level": 0,
+    "hint_level": 1,
     "solution_confirm_pending": false,
     "prepared_ts": "2026-11-25T08:03:44.718285+05:30"
   }
