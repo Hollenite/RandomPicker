@@ -13,6 +13,7 @@
   },
   "402": {
     "statement_hash": "ac4566d6e8f6e445298aa21bccd2d7adc480099579fd26fc08ab36f58d3905fd",
-    "hint_1": "**Hint:**  \nConsider using a *stack* (or a similar “last‑in‑first‑out” structure) to process the digits from left to right, maintaining a monotonic property that helps decide which digits to discard."
+    "hint_1": "**Hint:**  \nConsider using a *stack* (or a similar “last‑in‑first‑out” structure) to process the digits from left to right, maintaining a monotonic property that helps decide which digits to discard.",
+    "hint_2": "**Hint 2:**  \nWhile scanning the digits, think about the *first* place where a digit is larger than the next one. Removing that larger digit (if you still have deletions left) will always make the resulting number smaller, and it never harms the ability to achieve the optimal answer later. Keep this rule in mind as you decide which digits to drop."
   }
 }
