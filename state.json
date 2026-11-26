@@ -1,28 +1,23 @@
 {
   "telegram_update_offset": 983482019,
   "today": {
-    "date": "2026-11-25",
-    "id": 402,
-    "difficulty": "medium",
-    "title": "Remove K Digits",
-    "bucket": "medium",
+    "date": "2026-11-26",
+    "id": 1365,
+    "difficulty": "easy",
+    "title": "How Many Numbers Are Smaller Than the Current Number",
+    "bucket": "easy",
     "offered_ids": [
-      402
+      1365
     ],
-    "message_id": 127,
+    "message_id": 139,
     "button_message_ids": [
-      127,
-      128,
-      131,
-      132,
-      134,
-      136
+      139
     ],
     "status": "pending",
-    "reminders_sent": 3,
-    "last_reminder_ts": "2026-11-25T16:05:22.573670+05:30",
-    "hint_level": 2,
+    "reminders_sent": 0,
+    "last_reminder_ts": null,
+    "hint_level": 0,
     "solution_confirm_pending": false,
-    "prepared_ts": "2026-11-25T08:03:44.718285+05:30"
+    "prepared_ts": "2026-11-26T08:03:38.691319+05:30"
   }
 }

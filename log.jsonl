@@ -70,3 +70,5 @@
 {"ts": "2026-11-25T16:05:22.573670+05:30", "event": "reminder_sent", "id": 402, "difficulty": "medium", "bucket": "medium", "source": "poll", "reminder": 3}
 {"ts": "2026-11-25T16:50:18.103782+05:30", "event": "hint_1", "id": 402, "difficulty": "medium", "bucket": "medium", "source": "telegram_tutor"}
 {"ts": "2026-11-25T16:51:04.664944+05:30", "event": "hint_2", "id": 402, "difficulty": "medium", "bucket": "medium", "source": "telegram_tutor"}
+{"ts": "2026-11-26T08:03:38.691319+05:30", "event": "missed", "id": 402, "difficulty": "medium", "bucket": "medium", "source": "poll"}
+{"ts": "2026-11-26T08:03:38.691319+05:30", "event": "picked", "id": 1365, "difficulty": "easy", "bucket": "easy", "source": "poll"}
