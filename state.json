@@ -1,21 +1,23 @@
 {
   "telegram_update_offset": 983482020,
   "today": {
-    "date": "2026-11-26",
-    "id": 1365,
-    "difficulty": "easy",
-    "title": "How Many Numbers Are Smaller Than the Current Number",
-    "bucket": "easy",
+    "date": "2026-11-27",
+    "id": 2326,
+    "difficulty": "medium",
+    "title": "Spiral Matrix IV",
+    "bucket": "medium",
     "offered_ids": [
-      1365
+      2326
     ],
-    "message_id": 139,
-    "button_message_ids": [],
-    "status": "done",
-    "reminders_sent": 1,
-    "last_reminder_ts": "2026-11-26T10:03:45.413544+05:30",
+    "message_id": 145,
+    "button_message_ids": [
+      145
+    ],
+    "status": "pending",
+    "reminders_sent": 0,
+    "last_reminder_ts": null,
     "hint_level": 0,
     "solution_confirm_pending": false,
-    "prepared_ts": "2026-11-26T08:03:38.691319+05:30"
+    "prepared_ts": "2026-11-27T08:03:37.467254+05:30"
   }
 }
