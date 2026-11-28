@@ -1,19 +1,18 @@
 {
-  "telegram_update_offset": 983482021,
+  "telegram_update_offset": 983482022,
   "today": {
     "date": "2026-11-28",
-    "id": 146,
+    "id": 2109,
     "difficulty": "medium",
-    "title": "LRU Cache",
+    "title": "Adding Spaces to a String",
     "bucket": "medium",
     "offered_ids": [
-      146
+      146,
+      2109
     ],
     "message_id": 154,
     "button_message_ids": [
-      154,
-      155,
-      158
+      154
     ],
     "status": "pending",
     "reminders_sent": 2,
