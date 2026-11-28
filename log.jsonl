@@ -81,3 +81,4 @@
 {"ts": "2026-11-27T16:09:29.898328+05:30", "event": "done", "id": 2326, "difficulty": "medium", "bucket": "medium", "source": "telegram_done"}
 {"ts": "2026-11-28T08:02:25.640641+05:30", "event": "picked", "id": 146, "difficulty": "medium", "bucket": "medium", "source": "poll"}
 {"ts": "2026-11-28T10:02:32.303494+05:30", "event": "reminder_sent", "id": 146, "difficulty": "medium", "bucket": "medium", "source": "poll", "reminder": 1}
+{"ts": "2026-11-28T14:03:31.705175+05:30", "event": "reminder_sent", "id": 146, "difficulty": "medium", "bucket": "medium", "source": "poll", "reminder": 2}
